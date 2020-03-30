@@ -4,6 +4,7 @@
 #define CH_PIN_2 4
 #define CH_PIN_3 5
 #define CH_PIN_4 6
+#define INPUT_TIMEOUT 40000 // in microsecond
 
 // Global Variables
 int CH_1 = 0;
@@ -25,19 +26,21 @@ void setup() {
   Serial.println(data);
 }
 
-void readChannelInput() {
+int pulseInAndMap(byte ch) {
     // TODO: might use shift or mask to reduce precision
-  CH_1 = pulseIn(CH_PIN_1, HIGH) / 10;
-  CH_2 = pulseIn(CH_PIN_2, HIGH) / 10;
-  CH_3 = pulseIn(CH_PIN_3, HIGH) / 10;
-  CH_4 = pulseIn(CH_PIN_4, HIGH) / 10;
+    return pulseIn(ch, HIGH, INPUT_TIMEOUT)/10;
 }
 
+void readChannelInput() {
+  CH_1 = pulseInAndMap(CH_PIN_1);
+  CH_2 = pulseInAndMap(CH_PIN_2);
+  CH_3 = pulseInAndMap(CH_PIN_3);
+  CH_4 = pulseInAndMap(CH_PIN_4);
+}
 
 void loop() {
     readChannelInput();
 
     sprintf(data, "%d %d %d %d", CH_1, CH_2, CH_3, CH_4);
     Serial.println(data);
-
 }
