@@ -1,3 +1,5 @@
+#include <AUnit.h>
+
 #define DEBUG
 
 #define CH_1_PIN 3
@@ -5,6 +7,11 @@
 #define CH_3_PIN 5
 #define CH_4_PIN 6
 #define INPUT_TIMEOUT 40000 // in microsecond
+
+#define TRACK_LEFT_FORW 10
+#define TRACK_LEFT_BACK 11
+#define TRACK_RIGHT_FORW 12
+#define TRACK_RIGHT_BACK 13
 
 // Global Variables
 int intCh1 = 0;
@@ -26,6 +33,14 @@ void setup() {
   Serial.println(data);
 }
 
+int foo(int x, int y) {
+    return 0;
+}
+
+test(foo) {
+    assertEqual(foo(0, 0), (int) 0);
+}
+
 int pulseInAndMap(byte ch) {
     // TODO: might use shift or mask to reduce precision
     return pulseIn(ch, HIGH, INPUT_TIMEOUT) / 10;
@@ -39,6 +54,7 @@ void readChannelInput() {
 }
 
 void loop() {
+    aunit::TestRunner::run();
     readChannelInput();
 
     sprintf(data, "%d %d %d %d", intCh1, intCh2, intCh3, intCh4);
