@@ -1,4 +1,5 @@
 #include <AUnit.h>
+#include "Channel.h"
 
 #define DEBUG
 
@@ -13,50 +14,42 @@
 #define TRACK_RIGHT_FORW 12
 #define TRACK_RIGHT_BACK 13
 
-// Global Variables
-int intCh1 = 0;
-int intCh2 = 0;
-int intCh3 = 0;
-int intCh4 = 0;
+#define enA 9
+#define enB 10
 
 char data[128];
 
+Channel ch1(CH_1_PIN);
+/*
+Channel ch2(CH_2_PIN);
+Channel ch3(CH_3_PIN);
+Channel ch4(CH_4_PIN);
+*/
+
+
 void setup() {
-  // 4 pwm inputs and output
-  pinMode(CH_1_PIN, INPUT);
-  pinMode(CH_2_PIN, INPUT);
-  pinMode(CH_3_PIN, INPUT);
-  pinMode(CH_4_PIN, INPUT);
+
+    pinMode(enA, OUTPUT);
+    pinMode(enB, OUTPUT);
 
   Serial.begin(115200);
-  sprintf(data, "CH1 CH2 CH3 CH4");
-  Serial.println(data);
+//  sprintf(data, "CH1 CH2 CH3 CH4");
+//  Serial.println(data);
 }
 
-int foo(int x, int y) {
-    return 0;
-}
-
-test(foo) {
-    assertEqual(foo(0, 0), (int) 0);
-}
-
-int pulseInAndMap(byte ch) {
-    // TODO: might use shift or mask to reduce precision
-    return pulseIn(ch, HIGH, INPUT_TIMEOUT) / 10;
-}
-
-void readChannelInput() {
-  intCh1 = pulseInAndMap(CH_1_PIN);
-  intCh2 = pulseInAndMap(CH_2_PIN);
-  intCh3 = pulseInAndMap(CH_3_PIN);
-  intCh4 = pulseInAndMap(CH_4_PIN);
-}
+int speed=0;
 
 void loop() {
-    aunit::TestRunner::run();
-    readChannelInput();
+Serial.println(speed);
+analogWrite(enA, speed);
+analogWrite(enB, speed);
+speed+=1;
+speed %=256;
+delay(200);
 
-    sprintf(data, "%d %d %d %d", intCh1, intCh2, intCh3, intCh4);
-    Serial.println(data);
+    // aunit::TestRunner::run();
+    // readChannelInput();
+
+//    sprintf(data, "%d %d", ch1.read(), ch1.unsmoothed());
+//    Serial.println(data);
 }
