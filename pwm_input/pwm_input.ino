@@ -2,18 +2,19 @@
 
 #define DEBUG
 
-#define CH_1_PIN 3
-#define CH_2_PIN 4
-#define CH_3_PIN 5
+#define CH_1_PIN 10
+#define CH_2_PIN 11
+#define CH_3_PIN 12
+#define CH_4_PIN 13
 #define INPUT_TIMEOUT 40000 // in microsecond
 
-#define TRACK_LEFT_FORW 6
-#define TRACK_LEFT_BACK 7
-#define TRACK_RIGHT_FORW 8
-#define TRACK_RIGHT_BACK 9
+#define TRACK_LEFT_FORW 3
+#define TRACK_LEFT_BACK 4
+#define TRACK_RIGHT_FORW 7
+#define TRACK_RIGHT_BACK 8
 
-#define enA 10
-#define enB 11
+#define enA 5
+#define enB 6
 
 char data[128];
 
@@ -37,9 +38,6 @@ void setup() {
     Serial.begin(115200);
 }
 
-int speed=0;
-
-
 int runTrack(byte PIN, int input, byte TRACK_A, byte TRACK_B) {
     int pwm = map(input, 1090, 1890, -256, 256);
 
@@ -62,8 +60,8 @@ int runTrack(byte PIN, int input, byte TRACK_A, byte TRACK_B) {
 
 void loop() {
 
-    int left =runTrack(enA, ch1.read(), TRACK_LEFT_FORW, TRACK_LEFT_BACK);
-    int right =runTrack(enB, ch2.read(), TRACK_RIGHT_FORW, TRACK_RIGHT_BACK);
+    int left = runTrack(enA, ch1.read(), TRACK_LEFT_FORW, TRACK_LEFT_BACK);
+    int right = runTrack(enB, ch2.read(), TRACK_RIGHT_FORW, TRACK_RIGHT_BACK);
 
     sprintf(data, "%d %d", left, right);
     Serial.println(data);
