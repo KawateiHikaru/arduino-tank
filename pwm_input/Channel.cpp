@@ -12,15 +12,15 @@ Channel::Channel(int pin) {
 }
 
 unsigned int Channel::read() {
-    // todo: first read should populate all
     int val = pulseIn(_pin, HIGH, INPUT_TIMEOUT);
-
     // increment index and wrap around
     idx++;
     idx %= SMOOTH_COUNT;
 
     if (_firstRead) {
-        memset(&data, val, 10);
+        for (byte i=0;i<SMOOTH_COUNT;i++) {
+            data[i] = val;
+        }
         _firstRead = false;
     } else {
         data[idx] = val;
