@@ -1,6 +1,9 @@
 #include "Channel.h"
 
 #define DEBUG
+#define SINGLE_STICK
+#define ROTATION 0.7071067812
+#define THRESHOLD 64
 
 #define CH_1_PIN 10
 #define CH_2_PIN 11
@@ -40,14 +43,15 @@ void setup() {
     pinMode(TRACK_RIGHT_BACK, OUTPUT);
 
     Serial.begin(115200);
+    Serial.println("CH1 CH2");
 }
 
-int runTrack(byte PIN, int pwm, byte TRACK_A, byte TRACK_B) {
+void runTrack(byte PIN, int pwm, byte TRACK_A, byte TRACK_B) {
 
-    if (pwm > 64) {
+    if (pwm > THRESHOLD) {
         digitalWrite(TRACK_A, LOW);
         digitalWrite(TRACK_B, HIGH);
-    } else if (pwm < -64) {
+    } else if (pwm < -THRESHOLD) {
        digitalWrite(TRACK_A, HIGH);
        digitalWrite(TRACK_B, LOW);
     } else  {
@@ -57,8 +61,13 @@ int runTrack(byte PIN, int pwm, byte TRACK_A, byte TRACK_B) {
 
     pwm = abs(pwm);
     analogWrite(PIN, pwm);
+}
 
-    return pwm;
+bool inputOutsideBound(int left, int right) {
+    return (left >= SERVO_PWM_MAX ||
+            left <= SERVO_PWM_MIN ||
+           right >= SERVO_PWM_MAX ||
+           right <= SERVO_PWM_MIN);
 }
 
 void loop() {
@@ -66,10 +75,19 @@ void loop() {
     int left = map(ch1.read(), PWM_INPUT_MIN, PWM_INPUT_MAX, SERVO_PWM_MIN, SERVO_PWM_MAX);
     int right = map(ch2.read(), PWM_INPUT_MIN, PWM_INPUT_MAX, SERVO_PWM_MIN, SERVO_PWM_MAX);
 
-    // base on mode can make it go through a transform
-    left = runTrack(enA, left, TRACK_LEFT_FORW, TRACK_LEFT_BACK);
-    right = runTrack(enB, right, TRACK_RIGHT_FORW, TRACK_RIGHT_BACK);
+#ifdef SINGLE_STICK
+    int x = left * ROTATION + right * ROTATION;
+    int y = left * -ROTATION + right * ROTATION;
+    left = constrain(x, SERVO_PWM_MIN, SERVO_PWM_MAX);
+    right = constrain(y, SERVO_PWM_MIN, SERVO_PWM_MAX);
+#endif
 
-    sprintf(data, "%d %d", left, right);
+    if (!inputOutsideBound(left, right)) {
+        // base on mode can make it go through a transform
+        runTrack(enA, left, TRACK_LEFT_FORW, TRACK_LEFT_BACK);
+        runTrack(enB, right, TRACK_RIGHT_FORW, TRACK_RIGHT_BACK);
+    }
+
+    sprintf(data, "%d %d %b", left, right, inputOutsideBound(left, right));
     Serial.println(data);
 }
