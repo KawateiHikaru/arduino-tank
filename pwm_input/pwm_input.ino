@@ -17,6 +17,9 @@
 #define TRACK_LEFT_BACK 4
 #define TRACK_RIGHT_FORW 7
 #define TRACK_RIGHT_BACK 8
+#define STICK_PWM_MIN -360
+#define STICK_PWM_MAX  360
+
 #define SERVO_PWM_MIN -255
 #define SERVO_PWM_MAX  255
 
@@ -76,10 +79,12 @@ void loop() {
     int ch1 = pwmCh1.read();
     int ch2 = pwmCh2.read();
 
-    left  = map(ch1, PWM_INPUT_MIN, PWM_INPUT_MAX, SERVO_PWM_MIN, SERVO_PWM_MAX);
-    right = map(ch2, PWM_INPUT_MIN, PWM_INPUT_MAX, SERVO_PWM_MIN, SERVO_PWM_MAX);
 
 #ifdef SINGLE_STICK
+
+    left  = map(ch1, PWM_INPUT_MIN, PWM_INPUT_MAX, STICK_PWM_MIN, STICK_PWM_MAX);
+    right = map(ch2, PWM_INPUT_MIN, PWM_INPUT_MAX, STICK_PWM_MIN, STICK_PWM_MAX);
+
     x = left * ROTATION + right * ROTATION;
     y = left * -ROTATION + right * ROTATION;
 
