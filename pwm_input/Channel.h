@@ -4,7 +4,7 @@
 #include "Arduino.h"
 #define INPUT_TIMEOUT 40000 // in microsecond
 #define SMOOTH_COUNT 10
-#define GRANULARITY 3
+#define GRANULARITY 1
 
 class Channel
 {

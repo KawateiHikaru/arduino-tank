@@ -9,16 +9,16 @@
 #define CH_2_PIN 11
 #define CH_3_PIN 12
 #define CH_4_PIN 13
-#define PWM_INPUT_MIN 1090
-#define PWM_INPUT_MAX 1890
+#define PWM_INPUT_MIN 540
+#define PWM_INPUT_MAX 970
 #define INPUT_TIMEOUT 40000 // in microsecond
 
 #define TRACK_LEFT_FORW 3
 #define TRACK_LEFT_BACK 4
 #define TRACK_RIGHT_FORW 7
 #define TRACK_RIGHT_BACK 8
-#define SERVO_PWM_MIN -256
-#define SERVO_PWM_MAX  256
+#define SERVO_PWM_MIN -255
+#define SERVO_PWM_MAX  255
 
 #define enA 5
 #define enB 6
@@ -26,10 +26,10 @@
 char data[128];
 
 
-// 1090-1490-1890
-Channel ch1(CH_1_PIN);
-Channel ch2(CH_2_PIN);
-Channel ch3(CH_3_PIN);
+// 70-95-120 25 apart
+Channel pwmCh1(CH_1_PIN);
+Channel pwmCh2(CH_2_PIN);
+//Channel ch3(CH_3_PIN);
 
 
 void setup() {
@@ -71,23 +71,30 @@ bool inputOutsideBound(int left, int right) {
 }
 
 void loop() {
+    int left, right, x, y;
 
-    int left = map(ch1.read(), PWM_INPUT_MIN, PWM_INPUT_MAX, SERVO_PWM_MIN, SERVO_PWM_MAX);
-    int right = map(ch2.read(), PWM_INPUT_MIN, PWM_INPUT_MAX, SERVO_PWM_MIN, SERVO_PWM_MAX);
+    int ch1 = pwmCh1.read();
+    int ch2 = pwmCh2.read();
+
+    left  = map(ch1, PWM_INPUT_MIN, PWM_INPUT_MAX, SERVO_PWM_MIN, SERVO_PWM_MAX);
+    right = map(ch2, PWM_INPUT_MIN, PWM_INPUT_MAX, SERVO_PWM_MIN, SERVO_PWM_MAX);
 
 #ifdef SINGLE_STICK
-    int x = left * ROTATION + right * ROTATION;
-    int y = left * -ROTATION + right * ROTATION;
+    x = left * ROTATION + right * ROTATION;
+    y = left * -ROTATION + right * ROTATION;
+
     left = constrain(x, SERVO_PWM_MIN, SERVO_PWM_MAX);
     right = constrain(y, SERVO_PWM_MIN, SERVO_PWM_MAX);
 #endif
 
-    if (!inputOutsideBound(left, right)) {
+
+//    if (!inputOutsideBound(left, right))
+    {
         // base on mode can make it go through a transform
         runTrack(enA, left, TRACK_LEFT_FORW, TRACK_LEFT_BACK);
         runTrack(enB, right, TRACK_RIGHT_FORW, TRACK_RIGHT_BACK);
     }
 
-    sprintf(data, "%d %d %b", left, right, inputOutsideBound(left, right));
+    sprintf(data, "%d %d %d %d", left, right, x, y);
     Serial.println(data);
 }

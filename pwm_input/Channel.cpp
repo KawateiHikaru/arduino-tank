@@ -12,7 +12,7 @@ Channel::Channel(int pin) {
 }
 
 unsigned int Channel::read() {
-    int val = pulseIn(_pin, HIGH, INPUT_TIMEOUT);
+    int val = pulseIn(_pin, HIGH, INPUT_TIMEOUT) >> GRANULARITY;
     // increment index and wrap around
     idx++;
     idx %= SMOOTH_COUNT;
