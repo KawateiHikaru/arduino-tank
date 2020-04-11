@@ -85,6 +85,8 @@ void loop() {
     left  = map(ch1, PWM_INPUT_MIN, PWM_INPUT_MAX, STICK_PWM_MIN, STICK_PWM_MAX);
     right = map(ch2, PWM_INPUT_MIN, PWM_INPUT_MAX, STICK_PWM_MIN, STICK_PWM_MAX);
 
+    if (right < 0 ) left = -left;
+
     x = left * ROTATION + right * ROTATION;
     y = left * -ROTATION + right * ROTATION;
 
