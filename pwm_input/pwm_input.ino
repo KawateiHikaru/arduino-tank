@@ -1,12 +1,12 @@
-#include "Channel.h"
+#include "PWM.hpp"
 
 #define DEBUG
 #define SINGLE_STICK
 #define ROTATION 0.7071067812
 #define THRESHOLD 64
 
-#define CH_1_PIN 10
-#define CH_2_PIN 11
+#define CH_1_PIN 2
+#define CH_2_PIN 3
 #define CH_3_PIN 12
 #define CH_4_PIN 13
 #define PWM_INPUT_MIN 1100
@@ -31,12 +31,15 @@ char data[128];
 
 
 // 70-95-120 25 apart
-Channel pwmCh1(CH_1_PIN);
-Channel pwmCh2(CH_2_PIN);
+PWM pwmCh1(CH_1_PIN);
+PWM pwmCh2(CH_2_PIN);
 //Channel ch3(CH_3_PIN);
 
 
 void setup() {
+
+    pwmCh1.begin(true);
+    pwmCh2.begin(true);
 
     pinMode(enA, OUTPUT);
     pinMode(enB, OUTPUT);
@@ -77,8 +80,8 @@ bool inputOutsideBound(int left, int right) {
 void loop() {
     int left, right, x, y;
 
-    int ch1 = pwmCh1.read();
-    int ch2 = pwmCh2.read();
+    int ch1 = pwmCh1.getValue();
+    int ch2 = pwmCh2.getValue();
 
 
 #ifdef SINGLE_STICK
