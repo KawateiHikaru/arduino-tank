@@ -9,22 +9,23 @@
 #define CH_2_PIN 11
 #define CH_3_PIN 12
 #define CH_4_PIN 13
-#define PWM_INPUT_MIN 540
-#define PWM_INPUT_MAX 970
+#define PWM_INPUT_MIN 1100
+#define PWM_INPUT_MID 1500
+#define PWM_INPUT_MAX 1900
 #define INPUT_TIMEOUT 40000 // in microsecond
 
-#define TRACK_LEFT_FORW 3
-#define TRACK_LEFT_BACK 4
+#define TRACK_LEFT_FORW 4
+#define TRACK_LEFT_BACK 5
+#define enA 6
 #define TRACK_RIGHT_FORW 7
 #define TRACK_RIGHT_BACK 8
+#define enB 9
+
 #define STICK_PWM_MIN -360
 #define STICK_PWM_MAX  360
 
 #define SERVO_PWM_MIN -255
 #define SERVO_PWM_MAX  255
-
-#define enA 5
-#define enB 6
 
 char data[128];
 
@@ -45,7 +46,7 @@ void setup() {
     pinMode(TRACK_RIGHT_FORW, OUTPUT);
     pinMode(TRACK_RIGHT_BACK, OUTPUT);
 
-    Serial.begin(115200);
+    Serial.begin(9600);
     Serial.println("CH1 CH2");
 }
 
@@ -95,13 +96,13 @@ void loop() {
 #endif
 
 
-//    if (!inputOutsideBound(left, right))
+    if (!inputOutsideBound(left, right))
     {
         // base on mode can make it go through a transform
         runTrack(enA, left, TRACK_LEFT_FORW, TRACK_LEFT_BACK);
         runTrack(enB, right, TRACK_RIGHT_FORW, TRACK_RIGHT_BACK);
     }
 
-    sprintf(data, "%d %d %d %d", left, right, x, y);
+    sprintf(data, "%d %d %d %d %d %d", ch1, ch2, left, right, x, y);
     Serial.println(data);
 }
