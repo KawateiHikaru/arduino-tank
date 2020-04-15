@@ -1,5 +1,5 @@
 #include "Arduino.h"
-#include "Channel.h"
+#include "Channel.hpp"
 
 
 
@@ -11,7 +11,7 @@ Channel::Channel(int pin) {
     idx=-1;
 }
 
-unsigned int Channel::read() {
+unsigned int Channel::getValue() {
     int val = pulseIn(_pin, HIGH, INPUT_TIMEOUT) >> GRANULARITY;
     // increment index and wrap around
     idx++;
