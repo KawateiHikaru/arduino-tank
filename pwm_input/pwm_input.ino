@@ -22,24 +22,24 @@
 #define enB 9
 
 #define STICK_PWM_MIN -360
-#define STICK_PWM_MAX  360
+#define STICK_PWM_MAX 360
 
 #define SERVO_PWM_MIN -255
-#define SERVO_PWM_MAX  255
+#define SERVO_PWM_MAX 255
 
 char data[128];
-
 
 // 70-95-120 25 apart
 Channel pwmCh1(CH_1_PIN);
 Channel pwmCh2(CH_2_PIN);
-//Channel ch3(CH_3_PIN);
+// Channel pwmCh3(CH_3_PIN);
 
+void setup()
+{
 
-void setup() {
-
-  //    pwmCh1.begin(true);
-  //    pwmCh2.begin(true);
+  // pwmCh1.begin(true);
+  // pwmCh2.begin(true);
+  // pwmCh3.begin(true);
   delay(5000);
 
   pinMode(enA, OUTPUT);
@@ -50,19 +50,25 @@ void setup() {
   pinMode(TRACK_RIGHT_FORW, OUTPUT);
   pinMode(TRACK_RIGHT_BACK, OUTPUT);
 
-  //  Serial.begin(9600);
-  //  Serial.println("CH1 CH2");
+  Serial.begin(9600);
+  Serial.println("CH1 CH2");
 }
 
-void runTrack(byte PIN, int pwm, byte TRACK_A, byte TRACK_B) {
+void runTrack(byte PIN, int pwm, byte TRACK_A, byte TRACK_B)
+{
 
-  if (pwm > THRESHOLD) {
+  if (pwm > THRESHOLD)
+  {
     digitalWrite(TRACK_A, LOW);
     digitalWrite(TRACK_B, HIGH);
-  } else if (pwm < -THRESHOLD) {
+  }
+  else if (pwm < -THRESHOLD)
+  {
     digitalWrite(TRACK_A, HIGH);
     digitalWrite(TRACK_B, LOW);
-  } else  {
+  }
+  else
+  {
     digitalWrite(TRACK_A, HIGH);
     digitalWrite(TRACK_B, HIGH);
   }
@@ -70,26 +76,28 @@ void runTrack(byte PIN, int pwm, byte TRACK_A, byte TRACK_B) {
   analogWrite(PIN, abs(pwm));
 }
 
-bool inputOutsideBound(int left, int right) {
+bool inputOutsideBound(int left, int right)
+{
   return (left >= SERVO_PWM_MAX ||
           left <= SERVO_PWM_MIN ||
           right >= SERVO_PWM_MAX ||
           right <= SERVO_PWM_MIN);
 }
 
-void loop() {
+void loop()
+{
   int left, right, x, y;
 
   int ch1 = pwmCh1.getValue();
   int ch2 = pwmCh2.getValue();
 
-
 #ifdef SINGLE_STICK
 
-  left  = map(ch1, PWM_INPUT_MIN, PWM_INPUT_MAX, STICK_PWM_MIN, STICK_PWM_MAX);
+  left = map(ch1, PWM_INPUT_MIN, PWM_INPUT_MAX, STICK_PWM_MIN, STICK_PWM_MAX);
   right = map(ch2, PWM_INPUT_MIN, PWM_INPUT_MAX, STICK_PWM_MIN, STICK_PWM_MAX);
 
-  //    if (right < 0 ) left = -left;
+  if (right < -THRESHOLD)
+    left = -left;
 
   x = left * ROTATION + right * ROTATION;
   y = left * -ROTATION + right * ROTATION;
@@ -97,7 +105,6 @@ void loop() {
   left = constrain(x, SERVO_PWM_MIN, SERVO_PWM_MAX);
   right = constrain(y, SERVO_PWM_MIN, SERVO_PWM_MAX);
 #endif
-
 
   if (!inputOutsideBound(left, right))
   {
