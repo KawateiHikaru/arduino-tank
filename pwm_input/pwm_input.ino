@@ -117,7 +117,7 @@ void loop()
       }
       else if (steer > THRESHOLD)
       {
-        left = (throttle - abs(steer);
+        left = (throttle - abs(steer));
         if (left < 0) left = 0;
       }
     }
